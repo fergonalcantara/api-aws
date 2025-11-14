@@ -1,4 +1,9 @@
-// server.js
+if (process.env.NODE_ENV === 'production') {
+  require('dotenv').config({ path: '.env.production' });
+} else {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const config = require('./src/config/config');
 const { sequelize } = require('./src/config/database');
@@ -29,12 +34,12 @@ const startServer = async () => {
         await sequelize.authenticate();
         console.log('Database connected');
 
-        app.listen(config.port, () => {
+        app.listen(config.port, '0.0.0.0', () => {
             console.log(`Server running on port ${config.port}`);
-            console.log(`API available at http://localhost:${config.port}/api`);
+            console.log(`Environment: ${process.env.NODE_ENV}`);
         });
     } catch (error) {
-        console.error('Error:', error.message);
+        console.error('Error connecting to database:', error.message);
         process.exit(1);
     }
 };
